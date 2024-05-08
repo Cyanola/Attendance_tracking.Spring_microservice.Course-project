@@ -5,15 +5,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import lombok.Data;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 @RestController
-
+@Data
 public class VisitorController {
-
+    @RequestMapping("/")
+    public String index() {
+        return "index";
+    }
     @Autowired
     private VisitorService visitorService;
 
@@ -31,79 +34,151 @@ public class VisitorController {
         return new ResponseEntity<>(allVisitor, HttpStatus.OK);
     }
 
-    // Endpoint для получения  посещения по его идентификатору
-    @GetMapping("/{id}")
-    public ResponseEntity<Visitor> getVisitorById(@PathVariable UUID id) {
-        Optional<Visitor> visitor = visitorService.getVisitorById(id);
-        return visitor.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    // Endpoint для получения  всех мероприятий участника по его идентификатору
+    @GetMapping("/get/id/{id}")
+    public ResponseEntity<List<Visitor>> getVisitorByUUID( @PathVariable("id") UUID id) {
+     try{   List<Visitor> visitor = visitorService.getVisitorById(id);
+        return ResponseEntity.ok(visitor);
+    } catch (Exception e) {
+
+         System.out.println("Лох");
+        throw new RuntimeException("Error fetching visitors", e);
+
+    }
+    }
+    @GetMapping("/get/currentevent/{id}")
+    public ResponseEntity<List<Visitor>> getCurrentEvent( @PathVariable("id") UUID id) {
+    try{    List<Visitor> visitor = visitorService.getCurrentEvent(id);
+        return ResponseEntity.ok(visitor);
+    } catch (Exception e) {
+
+        System.out.println("Лох");
+        throw new RuntimeException("Error fetching visitors", e);
+
+    }
     }
 
+    @GetMapping("/get/uuidid/{id}/{id_}")
+    public ResponseEntity<List<Visitor>> getVisitorByUUID(@PathVariable ("id") UUID id, @PathVariable ("id_") int id_) {
+        List<Visitor> visitor = visitorService.getVisitorById(id, id_);
+        return ResponseEntity.ok(visitor);
+    }
+
+    @GetMapping("/getFIO/{surname}/{name}/{patronymic}/{email}")
+        public ResponseEntity<List<Visitor>>  getByFIO(@PathVariable("surname") String surname,@PathVariable("name") String name,
+                                                       @PathVariable("patronymic")        String patronymic,@PathVariable("email")  String email) {
+        List<Visitor> visitor = visitorService.getByFIO(surname, name, patronymic,email);
+        return ResponseEntity.ok(visitor);
+
+    }
+    @GetMapping("/getFIOUUID/{surname}/{name}/{patronymic}/{id}")
+    public ResponseEntity<List<Visitor>>  getByFIOUUID(@PathVariable("surname") String surname,@PathVariable("name") String name,
+                                                   @PathVariable("patronymic")        String patronymic,@PathVariable("id")  UUID id) {
+        List<Visitor> visitor = visitorService.getByFIOUUID(surname, name, patronymic,id);
+        return ResponseEntity.ok(visitor);
+
+    }
+    @GetMapping("/get/emailstatus/{email}/{status}")
+    public ResponseEntity<List<Visitor>> getVisitorByEmailStatus(@PathVariable ("email") String email, @PathVariable ("status") String status) {
+        List<Visitor> visitor = visitorService.findByEmailStatus(email, status);
+        return new ResponseEntity<>(visitor, HttpStatus.OK);
+    }
+    @GetMapping("/get/emailtrue/{email}/true")
+    public ResponseEntity<List<Visitor>> getVisitorByEmailStatusTrue(@PathVariable ("email") String email) {
+        List<Visitor> visitor = visitorService.findByEmailStatusTrue(email);
+        return new ResponseEntity<>(visitor, HttpStatus.OK);
+    }
+    @GetMapping("/get/uuidstatus/{uuid}/{status}")
+    public ResponseEntity<List<Visitor>> getVisitorByEmailStatus(@PathVariable("uuid") UUID uuid, @PathVariable("status") String status) {
+        List<Visitor> visitor = visitorService.findByUUIDStatus(uuid, status);
+        return new ResponseEntity<>(visitor, HttpStatus.OK);
+    }
+    @GetMapping("/get/uuidtrue/{uuid}/true")
+    public ResponseEntity<List<Visitor>> getVisitorByUUIDStatusTrue(@PathVariable("uuid") UUID uuid) {
+        List<Visitor> visitor = visitorService.findByUUIDStatusTrue(uuid);
+        return new ResponseEntity<>(visitor, HttpStatus.OK);
+    }
+    @GetMapping("/get/eventtrue/{event}/true")
+    public ResponseEntity<List<Visitor>> getVisitorByEventTrue(@PathVariable("event") String event) {
+        List<Visitor> visitor = visitorService.findByEventTrue(event);
+        return new ResponseEntity<>(visitor, HttpStatus.OK);
+    }
+    @GetMapping("/get/event/{event}")
+    public ResponseEntity<List<Visitor>> getVisitorByEvent(@PathVariable("event") String event) {
+        List<Visitor> visitor = visitorService.findByEvent(event);
+        return new ResponseEntity<>(visitor, HttpStatus.OK);
+    }
+    @GetMapping("/get/eventmark/{event}/{mark}")
+    public ResponseEntity<List<Visitor>> getVisitorByEventMark(@PathVariable("event") String event, @PathVariable("mark") int mark) {
+        List<Visitor> visitor = visitorService.findByEventMark(event, mark);
+        return new ResponseEntity<>(visitor, HttpStatus.OK);
+    }
     // Endpoint для обновления информации о посещении участника
-//    @PostMapping("/update/{id}")
-//    public ResponseEntity<Visitor> updateVisitor(@PathVariable UUID id, @RequestBody Visitor updatedVisitor) {
-//        Visitor visitor = visitorService.updateVisitor(id, updatedVisitor);
-//        if (visitor != null) {
-//            return new ResponseEntity<>(visitor, HttpStatus.OK);
-//        } else {
-//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//        }
-//    }
+    @PostMapping("/{id}/update")
+    public ResponseEntity<Visitor> updateVisitor(@PathVariable("id") int id, @RequestBody Visitor updatedVisitor) {
+        Visitor visitor = visitorService.updateVisitor(id, updatedVisitor);
+        if (visitor != null) {
+            return new ResponseEntity<>(visitor, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
 
     // Endpoint для удаления посещения по его идентификатору
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Void> deleteVisitor(@PathVariable UUID id) {
-        visitorService.deleteVisitor(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
-//    // Отображение посещения участника по его почте
-//    @GetMapping("/getemail/email")
-//    public List<Visitor> getVisitorByEmail(@RequestParam String email) {
-//        return visitorService.findByEmail(email);
+//    @DeleteMapping("/delete/{id}")
+//    public ResponseEntity<Void> deleteVisitor(@PathVariable UUID id) {
+//        visitorService.deleteVisitor(id);
+//        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 //    }
 
-    // Отображение посещения  по его оценке
+    // Отображение посещения участника по его почте
+    @GetMapping("/getemail/{email}")
+    public List<Visitor> getVisitorByEmail(@PathVariable("email") String email) {
+        return visitorService.findByEmail(email);
+    }
+
+    @GetMapping("/getcount/{event}")
+    public int getVisitorCountForEvent(@PathVariable("event") String event) {
+        return visitorService.getVisitorCountForEvent(event);
+    }
+
+
+    //все  участники всех мероприятий с оценкой
     @GetMapping("/getmark/{mark}")
-    public  List<Object[]>  getVisitorByMark(@PathVariable int mark) {
+    public  List<Visitor>  getVisitorByMark(@PathVariable("mark") int mark) {
         return visitorService.findByMark(mark);
     }
 
-    // Отображение посещения  по его статусу
+    //все  участники всех мероприятий со статусом
     @GetMapping("/getstatus/{status}")
-    public  List<Object[]>   getVisitorByStatus(@PathVariable String status) {
+    public  List<Visitor>   getVisitorByStatus(@PathVariable("status") String status) {
         return visitorService.findByStatus(status);
     }
 
-    // Отображение посещения  по его комментарию
+    //все  участники всех мероприятий с комментарием
     @GetMapping("/getcomment/{comment}")
-    public List<Object[]>  getVisitorByComment(@PathVariable String comment) {
+    public List<Visitor>  getVisitorByComment(@PathVariable("comment") String comment) {
         return visitorService.findByComment(comment);
     }
 
     //Смена статуса посещения
-    @PostMapping("/chstatus/{status}/{id}")
-    public Visitor changeStatus(@PathVariable UUID id, @PathVariable String status) {
-        return visitorService.changeStatus(id, status);
+    @PostMapping("/{id}/chstatus")
+    public Visitor changeStatus(@PathVariable("id") int id, @RequestBody Visitor changedVisitor) {
+        return visitorService.changeStatus(id, changedVisitor);
     }
-    @PostMapping("/change/{id}/{status}/{mark}/{comment}")
-//    public Visitor[] change(@PathVariable UUID id, @PathVariable String status,@PathVariable int mark,@PathVariable String comment) {
-//    return new Visitor[]{visitorService.changeStatus(id, status),
-//        visitorService.changeMark(id, mark),
-//        visitorService.changeComment(id, comment)};
-//    }
-    public Visitor change(@PathVariable UUID id, @PathVariable String status,@PathVariable int mark,@PathVariable String comment) {
-        return visitorService.change(id, status, mark, comment);
+    @PostMapping("/{id}/change")
+    public Visitor change(@PathVariable("id") int id, @RequestBody Visitor changedVisitor) {
+        return visitorService.change(id, changedVisitor);
     }
 
     // Смена оценки посещения участника
-    @PostMapping("/chmark/{id}/{mark}")
-    public Visitor changeMark(@PathVariable UUID id, @PathVariable int mark) {
-        return visitorService.changeMark(id, mark);
+    @PostMapping("/{id}/chmark")
+    public Visitor changeMark(@PathVariable("id") int id, @RequestBody Visitor changedVisitor) {
+        return visitorService.changeMark(id, changedVisitor);
     }
     // Смена комментария посещения участника
-    @PostMapping("/chcomment/{id}/{comment}")
-    public Visitor changeComment(@PathVariable UUID id, @PathVariable String comment) {
-        return visitorService.changeComment(id, comment);
+    @PostMapping("/{id}/chcomment")
+    public Visitor changeComment(@PathVariable("id") int id,  @RequestBody Visitor changedVisitor) {
+        return visitorService.changeComment(id, changedVisitor);
     }
 }

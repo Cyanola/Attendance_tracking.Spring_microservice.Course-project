@@ -19,16 +19,5 @@ public class AttendanceApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(AttendanceApplication.class, args);
 	}
-	@Primary
-	@Bean
-	@ConfigurationProperties(prefix = "spring.datasource.primary")
-	public DataSource primaryDataSource() {
-		return DataSourceBuilder.create().build();
-	}
 
-	@Bean
-	@ConfigurationProperties(prefix = "spring.datasource.secondary")
-	public DataSource secondaryDataSource() {
-		return DataSourceBuilder.create().build();
-	}
 }
