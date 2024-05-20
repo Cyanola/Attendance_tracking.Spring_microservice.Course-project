@@ -6,12 +6,14 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
 import java.util.UUID;
 @Entity
 @Data
-
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name="visitor")
 public class Visitor {
     @Id

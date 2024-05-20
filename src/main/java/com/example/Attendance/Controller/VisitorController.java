@@ -165,10 +165,17 @@ public class VisitorController {
     @PostMapping("/{id}/chstatus")
     public Visitor changeStatus(@PathVariable("id") int id, @RequestBody Visitor changedVisitor) {
         return visitorService.changeStatus(id, changedVisitor);
+
     }
     @PostMapping("/{id}/change")
-    public Visitor change(@PathVariable("id") int id, @RequestBody Visitor changedVisitor) {
-        return visitorService.change(id, changedVisitor);
+    public  ResponseEntity< Visitor> change(@PathVariable("id") int id, @RequestBody Visitor changedVisitor) {
+     //   return visitorService.change(id, changedVisitor);
+        Visitor visitor = visitorService.change(id, changedVisitor);
+        if (visitor != null) {
+            return new ResponseEntity<>(visitor, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
     // Смена оценки посещения участника
