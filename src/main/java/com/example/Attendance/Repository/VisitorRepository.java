@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.Modifying;
@@ -86,7 +87,14 @@ public interface VisitorRepository extends JpaRepository<Visitor, UUID> {
     @Query("SELECT v FROM Visitor v WHERE v.event=:event and v.mark = :mark and v.status = 'Присутствовал'")
     List<Visitor> findByEventMark(@Param("event") String event,@Param("mark") int mark);
 
-
+    @Query(value="SELECT v.* FROM Visitor v " +
+            "WHERE v.surname = :surname " +
+            "AND v.name = :name " +
+            "AND v.patronymic = :patronymic " +
+            "AND v.email = :email " +
+            "AND v.started_at BETWEEN CURRENT_TIMESTAMP AND :endDate",nativeQuery = true)
+    List<Visitor> getByDate(@Param("surname") String surname, @Param("name") String name,@Param("patronymic") String patr,@Param("email") String email,
+                            @Param("endDate") Timestamp endDate);
 
     @Query("SELECT v  FROM Visitor v " +
             "WHERE v.surname=:surname and v.name = :name and v.patronymic = :patronymic and v.email=:email")

@@ -1,3 +1,4 @@
+let now = new Date();
 async function closeData(id, id_visit,email, val) {
     var str = roof.options[roof.selectedIndex].textContent.split(" ");
 let cd=roof.options[roof.selectedIndex].textContent.split(" ");
@@ -54,13 +55,430 @@ let cd=roof.options[roof.selectedIndex].textContent.split(" ");
   }
 
 
+
+  // Функция для обновления таблицы с информацией о посещении мероприятиям
+  function updatevisitorTable2(cd,d,emai,optionvalue) {
+      var tableBody = document.querySelector("#visitorTable2 tbody");
+      tableBody.innerHTML = ""; // Очищаем таблицу перед обновлением
+switch(optionvalue)
+     {
+     case "all":{
+        document.getElementById('Vis').textContent="Мероприятия";
+ fetch("http://localhost:9090/getFIO/"+cd[0]+"/"+cd[1]+"/"+cd[2]+"/"+emai)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Failed to fetch visitor.");
+        }
+        return response.json();
+      })
+      .then((visitor1) => {
+
+     // root1.textContent = visitorData.email;
+         fetch("http://localhost:9090/get/id/"+d)
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Failed to fetch visitor.");
+          }
+          return response.json();
+        })
+        .then((visitor) => {
+          visitor.forEach((visitor) => {
+            let date1 = new Date(visitor.started_at);
+
+            let formattedDate1 = date1.getFullYear() + "-" +
+                ("0" + (date1.getMonth() + 1)).slice(-2) + "-" +
+                ("0" + date1.getDate()).slice(-2) + " " +
+                ("0" + date1.getHours()).slice(-2) + ":" +
+                ("0" + date1.getMinutes()).slice(-2) + ":" +
+                ("0" + date1.getSeconds()).slice(-2);
+
+                let date2 = new Date(visitor.ended_at);
+
+                let formattedDate2 = date2.getFullYear() + "-" +
+                    ("0" + (date2.getMonth() + 1)).slice(-2) + "-" +
+                    ("0" + date2.getDate()).slice(-2) + " " +
+                    ("0" + date2.getHours()).slice(-2) + ":" +
+                    ("0" + date2.getMinutes()).slice(-2) + ":" +
+                    ("0" + date2.getSeconds()).slice(-2);
+            var row =
+              "<tr>" +
+              "<td>" +
+              visitor.event +
+              "</td>" +
+              "<td>" +
+              (formattedDate1) +
+              "</td>" +
+                  "<td>" +
+                        (formattedDate2) +
+                        "</td>" +
+                            "<td>" +
+                                  (visitor.status) +
+                                  "</td>" +
+                                      "<td>" +
+                                            (visitor.comment) +
+                                            "</td>" +
+                                                "<td>" +
+                                                      (visitor.mark) +
+                                                      "</td>"
+
+              "</tr>";
+            tableBody.insertAdjacentHTML("beforeend", row);
+             var buttonCell = document.createElement('td');
+                    var button = document.createElement('button');
+                    button.textContent = 'Обновить';
+
+                    // Передаем параметры в функцию updatevisitor
+                    button.onclick = function() { updatevisitor(visitor.id, d); };
+
+                    buttonCell.appendChild(button);
+                    tableBody.lastChild.appendChild(buttonCell);
+          });
+        })
+        .catch((error) => {
+          console.error("Failed to fetch visitor:", error);
+        });
+          }
+              )
+              .catch((error) => {
+                console.error(
+                  "Не удалось получить подробную информацию о посещении мероприятия:",
+                  error
+                );
+              });
+              break;
+     }
+      case "week" : {
+       document.getElementById('Vis').textContent="Ближайшие мероприятия";
+        let endDate = new Date();
+        endDate.setDate(now.getDate() + 8);
+
+          let formatte = endDate.getFullYear() + "-" +
+                  ("0" + (endDate.getMonth() + 1)).slice(-2) + "-" +
+                  ("0" + endDate.getDate()).slice(-2) + " " +
+                  ("0" + endDate.getHours()).slice(-2) + ":" +
+                  ("0" + endDate.getMinutes()).slice(-2) + ":" +
+                  ("0" + endDate.getSeconds()).slice(-2);
+                    console.log(formatte);
+      fetch("http://localhost:9090/getDate/"+cd[0]+"/"+cd[1]+"/"+cd[2]+"/"+emai+"/"+formatte)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Failed to fetch visitor.");
+        }
+        return response.json();
+      })
+      .then((visitor1) => {
+          visitor1.forEach((visitor) => {
+            let date1 = new Date(visitor.started_at);
+
+            let formattedDate1 = date1.getFullYear() + "-" +
+                ("0" + (date1.getMonth() + 1)).slice(-2) + "-" +
+                ("0" + date1.getDate()).slice(-2) + " " +
+                ("0" + date1.getHours()).slice(-2) + ":" +
+                ("0" + date1.getMinutes()).slice(-2) + ":" +
+                ("0" + date1.getSeconds()).slice(-2);
+
+                let date2 = new Date(visitor.ended_at);
+
+                let formattedDate2 = date2.getFullYear() + "-" +
+                    ("0" + (date2.getMonth() + 1)).slice(-2) + "-" +
+                    ("0" + date2.getDate()).slice(-2) + " " +
+                    ("0" + date2.getHours()).slice(-2) + ":" +
+                    ("0" + date2.getMinutes()).slice(-2) + ":" +
+                    ("0" + date2.getSeconds()).slice(-2);
+            var row =
+              "<tr>" +
+              "<td>" +
+              visitor.event +
+              "</td>" +
+              "<td>" +
+              (formattedDate1) +
+              "</td>" +
+                  "<td>" +
+                        (formattedDate2) +
+                        "</td>" +
+                            "<td>" +
+                                  (visitor.status) +
+                                  "</td>" +
+                                      "<td>" +
+                                            (visitor.comment) +
+                                            "</td>" +
+                                                "<td>" +
+                                                      (visitor.mark) +
+                                                      "</td>"
+
+              "</tr>";
+            tableBody.insertAdjacentHTML("beforeend", row);
+             var buttonCell = document.createElement('td');
+                    var button = document.createElement('button');
+                    button.textContent = 'Обновить';
+
+                    // Передаем параметры в функцию updatevisitor
+                    button.onclick = function() { updatevisitor(visitor.id, d); };
+
+                    buttonCell.appendChild(button);
+                    tableBody.lastChild.appendChild(buttonCell);
+          });
+        })
+         .catch((error) => {
+                        console.error(
+                          "Не удалось получить подробную информацию о посещении мероприятия:",
+                          error
+                        );
+                      });
+                      break;
+          }
+
+
+
+              case "threedays":{
+
+                     document.getElementById('Vis').textContent="Ближайшие мероприятия";
+                             let endDate = new Date();
+                             endDate.setDate(now.getDate() + 4);
+                          let formatte = endDate.getFullYear() + "-" +
+                                         ("0" + (endDate.getMonth() + 1)).slice(-2) + "-" +
+                                         ("0" + endDate.getDate()).slice(-2) + " " +
+                                         ("0" + endDate.getHours()).slice(-2) + ":" +
+                                         ("0" + endDate.getMinutes()).slice(-2) + ":" +
+                                         ("0" + endDate.getSeconds()).slice(-2);
+                             fetch("http://localhost:9090/getDate/"+cd[0]+"/"+cd[1]+"/"+cd[2]+"/"+emai+"/"+formatte)
+
+      .then((response) => {
+             if (!response.ok) {
+               throw new Error("Failed to fetch visitor.");
+             }
+             return response.json();
+           })
+           .then((visitor1) => {
+               visitor1.forEach((visitor) => {
+                 let date1 = new Date(visitor.started_at);
+
+                 let formattedDate1 = date1.getFullYear() + "-" +
+                     ("0" + (date1.getMonth() + 1)).slice(-2) + "-" +
+                     ("0" + date1.getDate()).slice(-2) + " " +
+                     ("0" + date1.getHours()).slice(-2) + ":" +
+                     ("0" + date1.getMinutes()).slice(-2) + ":" +
+                     ("0" + date1.getSeconds()).slice(-2);
+
+                     let date2 = new Date(visitor.ended_at);
+
+                     let formattedDate2 = date2.getFullYear() + "-" +
+                         ("0" + (date2.getMonth() + 1)).slice(-2) + "-" +
+                         ("0" + date2.getDate()).slice(-2) + " " +
+                         ("0" + date2.getHours()).slice(-2) + ":" +
+                         ("0" + date2.getMinutes()).slice(-2) + ":" +
+                         ("0" + date2.getSeconds()).slice(-2);
+                 var row =
+                   "<tr>" +
+                   "<td>" +
+                   visitor.event +
+                   "</td>" +
+                   "<td>" +
+                   (formattedDate1) +
+                   "</td>" +
+                       "<td>" +
+                             (formattedDate2) +
+                             "</td>" +
+                                 "<td>" +
+                                       (visitor.status) +
+                                       "</td>" +
+                                           "<td>" +
+                                                 (visitor.comment) +
+                                                 "</td>" +
+                                                     "<td>" +
+                                                           (visitor.mark) +
+                                                           "</td>"
+
+                   "</tr>";
+                 tableBody.insertAdjacentHTML("beforeend", row);
+                  var buttonCell = document.createElement('td');
+                         var button = document.createElement('button');
+                         button.textContent = 'Обновить';
+
+                         // Передаем параметры в функцию updatevisitor
+                         button.onclick = function() { updatevisitor(visitor.id, d); };
+
+                         buttonCell.appendChild(button);
+                         tableBody.lastChild.appendChild(buttonCell);
+               });
+             })
+              .catch((error) => {
+                             console.error(
+                               "Не удалось получить подробную информацию о посещении мероприятия:",
+                               error
+                             );
+                           });
+                           break;
+              }
+                 case "twodays":{
+                        document.getElementById('Vis').textContent="Ближайшие мероприятия";
+        let endDate = new Date();
+        endDate.setDate(now.getDate() + 3);
+   let formatte = endDate.getFullYear() + "-" +
+                  ("0" + (endDate.getMonth() + 1)).slice(-2) + "-" +
+                  ("0" + endDate.getDate()).slice(-2) + " " +
+                  ("0" + endDate.getHours()).slice(-2) + ":" +
+                  ("0" + endDate.getMinutes()).slice(-2) + ":" +
+                  ("0" + endDate.getSeconds()).slice(-2);
+      fetch("http://localhost:9090/getDate/"+cd[0]+"/"+cd[1]+"/"+cd[2]+"/"+emai+"/"+formatte)
+     .then((response) => {
+            if (!response.ok) {
+              throw new Error("Failed to fetch visitor.");
+            }
+            return response.json();
+          })
+          .then((visitor1) => {
+              visitor1.forEach((visitor) => {
+                let date1 = new Date(visitor.started_at);
+
+                let formattedDate1 = date1.getFullYear() + "-" +
+                    ("0" + (date1.getMonth() + 1)).slice(-2) + "-" +
+                    ("0" + date1.getDate()).slice(-2) + " " +
+                    ("0" + date1.getHours()).slice(-2) + ":" +
+                    ("0" + date1.getMinutes()).slice(-2) + ":" +
+                    ("0" + date1.getSeconds()).slice(-2);
+
+                    let date2 = new Date(visitor.ended_at);
+
+                    let formattedDate2 = date2.getFullYear() + "-" +
+                        ("0" + (date2.getMonth() + 1)).slice(-2) + "-" +
+                        ("0" + date2.getDate()).slice(-2) + " " +
+                        ("0" + date2.getHours()).slice(-2) + ":" +
+                        ("0" + date2.getMinutes()).slice(-2) + ":" +
+                        ("0" + date2.getSeconds()).slice(-2);
+                var row =
+                  "<tr>" +
+                  "<td>" +
+                  visitor.event +
+                  "</td>" +
+                  "<td>" +
+                  (formattedDate1) +
+                  "</td>" +
+                      "<td>" +
+                            (formattedDate2) +
+                            "</td>" +
+                                "<td>" +
+                                      (visitor.status) +
+                                      "</td>" +
+                                          "<td>" +
+                                                (visitor.comment) +
+                                                "</td>" +
+                                                    "<td>" +
+                                                          (visitor.mark) +
+                                                          "</td>"
+
+                  "</tr>";
+                tableBody.insertAdjacentHTML("beforeend", row);
+                 var buttonCell = document.createElement('td');
+                        var button = document.createElement('button');
+                        button.textContent = 'Обновить';
+
+                        // Передаем параметры в функцию updatevisitor
+                        button.onclick = function() { updatevisitor(visitor.id, d); };
+
+                        buttonCell.appendChild(button);
+                        tableBody.lastChild.appendChild(buttonCell);
+              });
+            })
+             .catch((error) => {
+                            console.error(
+                              "Не удалось получить подробную информацию о посещении мероприятия:",
+                              error
+                            );
+                          });
+                          break;
+                            }
+                               case "tomorrow":{
+                                      document.getElementById('Vis').textContent="Ближайшие мероприятия";
+                                   let endDate = new Date();
+                                   endDate.setDate(now.getDate() + 2);
+                                 let formatte = endDate.getFullYear() + "-" +
+                                                ("0" + (endDate.getMonth() + 1)).slice(-2) + "-" +
+                                                ("0" + endDate.getDate()).slice(-2) + " " +
+                                                ("0" + endDate.getHours()).slice(-2) + ":" +
+                                                ("0" + endDate.getMinutes()).slice(-2) + ":" +
+                                                ("0" + endDate.getSeconds()).slice(-2);
+                                    fetch("http://localhost:9090/getDate/"+cd[0]+"/"+cd[1]+"/"+cd[2]+"/"+emai+"/"+formatte)
+                                     .then((response) => {
+                                            if (!response.ok) {
+                                              throw new Error("Failed to fetch visitor.");
+                                            }
+                                            return response.json();
+                                          })
+                                          .then((visitor1) => {
+                                              visitor1.forEach((visitor) => {
+                                                let date1 = new Date(visitor.started_at);
+
+                                                let formattedDate1 = date1.getFullYear() + "-" +
+                                                    ("0" + (date1.getMonth() + 1)).slice(-2) + "-" +
+                                                    ("0" + date1.getDate()).slice(-2) + " " +
+                                                    ("0" + date1.getHours()).slice(-2) + ":" +
+                                                    ("0" + date1.getMinutes()).slice(-2) + ":" +
+                                                    ("0" + date1.getSeconds()).slice(-2);
+
+                                                    let date2 = new Date(visitor.ended_at);
+
+                                                    let formattedDate2 = date2.getFullYear() + "-" +
+                                                        ("0" + (date2.getMonth() + 1)).slice(-2) + "-" +
+                                                        ("0" + date2.getDate()).slice(-2) + " " +
+                                                        ("0" + date2.getHours()).slice(-2) + ":" +
+                                                        ("0" + date2.getMinutes()).slice(-2) + ":" +
+                                                        ("0" + date2.getSeconds()).slice(-2);
+                                                var row =
+                                                  "<tr>" +
+                                                  "<td>" +
+                                                  visitor.event +
+                                                  "</td>" +
+                                                  "<td>" +
+                                                  (formattedDate1) +
+                                                  "</td>" +
+                                                      "<td>" +
+                                                            (formattedDate2) +
+                                                            "</td>" +
+                                                                "<td>" +
+                                                                      (visitor.status) +
+                                                                      "</td>" +
+                                                                          "<td>" +
+                                                                                (visitor.comment) +
+                                                                                "</td>" +
+                                                                                    "<td>" +
+                                                                                          (visitor.mark) +
+                                                                                          "</td>"
+
+                                                  "</tr>";
+                                                tableBody.insertAdjacentHTML("beforeend", row);
+                                                 var buttonCell = document.createElement('td');
+                                                        var button = document.createElement('button');
+                                                        button.textContent = 'Обновить';
+
+                                                        // Передаем параметры в функцию updatevisitor
+                                                        button.onclick = function() { updatevisitor(visitor.id, d); };
+
+                                                        buttonCell.appendChild(button);
+                                                        tableBody.lastChild.appendChild(buttonCell);
+                                              });
+                                            })
+                                             .catch((error) => {
+                                                            console.error(
+                                                              "Не удалось получить подробную информацию о посещении мероприятия:",
+                                                              error
+                                                            );
+                                                          });
+                                                          break;
+                                          }
+              }
+    }
+
+
+
+
   // Функция для обновления таблицы с информацией о посещении мероприятиям
   function updatevisitorTable(cd,d,emai) {
       var tableBody = document.querySelector("#visitorTable tbody");
       tableBody.innerHTML = ""; // Очищаем таблицу перед обновлением
 
            console.log(emai)+" /";
-      fetch("http://localhost:9090/getFIO/"+cd[0]+"/"+cd[1]+"/"+cd[2]+"/"+emai)
+      fetch("http://localhost:9090/get/emailtrue/"+emai+"/true")
       .then((response) => {
         if (!response.ok) {
           throw new Error("Failed to fetch visitor.");
@@ -256,6 +674,7 @@ if(new Date(currentTimeMoscow)<new Date(visitor[0].started_at)){document.getElem
                         throw new Error("Не удалось обновить информацию о посещении мероприятия.");
                       }
                       updatevisitorTable(visitor[0].surname+" "+visitor[0].name+" "+visitor[0].patronymic, visitor[0].id_visit, visitor[0].email);
+                      updatevisitorTable2(visitor[0].surname+" "+visitor[0].name+" "+visitor[0].patronymic, visitor[0].id_visit, visitor[0].email,selectDate.options[selectDate.selectedIndex].value);
                     })
                     .catch((error) => {
                       console.error("Не удалось обновить информацию о посещении мероприятия:", error);
@@ -263,6 +682,7 @@ if(new Date(currentTimeMoscow)<new Date(visitor[0].started_at)){document.getElem
 
         })
         document.getElementById('overlay').style.display = 'none';
+        alert("Данные обновлены");
         }
            var sur='Иванов';
             var name='Иван';
@@ -287,6 +707,36 @@ document.body.appendChild(rooter);
                                  root1.innerHTML ='<label id="emailLabel" textContent="email1"></label>';
 
 
+     document.getElementById('selectDate').addEventListener('change', function() {
+
+     let cd=roof.options[roof.selectedIndex].textContent.split(" ");
+     let d=roof.options[roof.selectedIndex].value;
+
+     fetch("http://localhost:9090/getFIOUUID/"+cd[0]+"/"+cd[1]+"/"+cd[2]+"/"+d)
+                 .then((response) => {
+         if (!response.ok) {
+                              throw new Error("Failed to fetch visitor. The number of str is "+ new Error().lineNumber);
+                              console.log("The number of str is "+ new Error().lineNumber);
+                            }
+                            return response.json();
+                          })
+                          .then((visitor1) => {
+                   const emai = visitor1[0].email;
+
+                                      updatevisitorTable2(cd,d,emai,selectDate.options[selectDate.selectedIndex].value);
+root1.textContent=emai;
+                   }
+                   )
+            .catch((error) => {
+                                       console.error(
+                                         "Не удалось получить подробную информацию о посещении мероприятия:",
+                                         error
+                                       );
+                                     });
+
+
+                             });
+
 
 
 
@@ -306,6 +756,7 @@ document.body.appendChild(rooter);
                           .then((visitor1) => {
                    const emai = visitor1[0].email;
                                   updatevisitorTable(cd,d,emai);
+                                      updatevisitorTable2(cd,d,emai,selectDate.options[selectDate.selectedIndex].value);
                               console.log(emai);
 root1.textContent=emai;
                                 fetch("http://localhost:9090/get/currentevent/"+visitor1[0].id_visit)
@@ -389,6 +840,7 @@ let cd=roof.options[roof.selectedIndex].textContent.split(" ");
            const emai = visitor1[0].email;
            console.log(emai);
                updatevisitorTable(cd,d,emai);
+                   updatevisitorTable2(cd,d,emai,selectDate.options[selectDate.selectedIndex].value);
            }
            )
     .catch((error) => {

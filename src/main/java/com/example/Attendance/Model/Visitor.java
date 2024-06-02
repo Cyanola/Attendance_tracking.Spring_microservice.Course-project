@@ -10,6 +10,13 @@ import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
 import java.util.UUID;
+/**
+ * Класс Visitor представляет собой запись о посещении мероприятия участником, который
+ * был зарегистрирован на мероприятие и подтвердил явку через ответ на уведомление
+ *
+ * @version 1.0
+ * @author Artemova
+ */
 @Entity
 @Data
 @AllArgsConstructor
@@ -65,41 +72,77 @@ public class Visitor {
     @Column(name = "mark")
     private int mark;
 
-
+    /**
+     * Получить статус
+     * @return статус
+     */
     public String getStatus() {
         return status;
     }
+    /**
+     * Установить статус.
+     *
+     * @param status статус
+     */
 
     public void setStatus(String status) {
         this.status = status;
     }
-
+    /**
+     * Получить комментарий
+     * @return комментарий
+     */
 
     public String getComment() {
         return comment;
     }
-
+    /**
+     * Установить комментарий.
+     *
+     * @param comment комментарий
+     */
     public void setComment(String comment) {
         this.comment = comment;
     }
-
+    /**
+     * Получить оценку
+     * @return оценка
+     */
     public int getMark() {
         return mark;
     }
+    /**
+     * Установить оценку.
+     *
+     * @param mark оценка
+     */
 
     public void setMark(int mark) {
         this.mark = mark;
     }
+
+    /**
+     * Получить время начала мероприятия
+     * @return время начала
+     */
     @Transient
     public Timestamp startedAt() {
 
         return started_at;
     }
+    /**
+     * Получить время окончания мероприятия
+     * @return время окончания
+     */
     @Transient
     public Timestamp endedAt() {
 
         return ended_at;
     }
+    /**
+     * Получить идентификатор участника мероприятия
+     * @return идентификатор участника мероприятия
+     */
     @Transient
     public UUID getUUID() {
 

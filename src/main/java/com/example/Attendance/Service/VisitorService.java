@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -105,6 +106,11 @@ public class VisitorService {
     public List<Visitor>  findByEventMark(String event, int mark) {
         return visitorRepository.findByEventMark(event, mark);
     }
+    public List<Visitor> getByDate(
+            String sur, String name, String patr, String email, Timestamp date) {
+        return visitorRepository.getByDate(sur, name, patr, email, date);
+    }
+
     public List<Visitor> getByFIO(
             String sur,String name,String patr, String email) {
         return visitorRepository.getByFIO(sur, name, patr, email);

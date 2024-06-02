@@ -5,6 +5,40 @@
     <title>Attendance Tracking</title>
        <link rel="stylesheet" href="style.css" />
     <style>
+    .emoji-input-container {
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+#emoji-input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    width: 200px;
+}
+
+#emoji-picker {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    padding: 10px;
+}
+
+.emoji-picker-emoji {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    margin: 5px;
+}
+
+.emoji-picker-emoji:hover {
+    background-color: #eee;
+}
 body {
   font-family: Arial, sans-serif;
   margin: 0;
@@ -16,7 +50,34 @@ h2 {
   margin-top: 30px;
 }
 
+/* Стили для таблицы */
+#visitorTable2 {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
 
+#visitorTable2 th,
+#visitorTable td {
+  padding: 10px;
+  border: 1px solid #ddd;
+}
+
+#visitorTable2 th {
+  background-color: #f2f2f2;
+}
+
+#visitorTable2 tbody tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+#visitorTable2 tbody tr:hover {
+  background-color: #e6e6e6;
+}
+
+#visitorTable2 td:nth-child(4) {
+  text-align: center;
+}
 
 
 /* Стили для таблицы */
@@ -114,7 +175,31 @@ h2 {
 
 <div id="update-content">
 </div>
-<h2>Мероприятия</h2>
+<select id="selectDate">
+    <option value="week">В ближайшую неделю</option>
+    <option value="threedays">В ближайшие 3 дня</option>
+    <option value="twodays">В ближайшие 2 дня</option>
+    <option value="tomorrow">Завтра</option>
+    <option selected value="all">Все</option>
+</select>
+<h2 id="Vis">Мероприятия</h2>
+<table id="visitorTable2">
+    <thead>
+    <tr>
+        <th>Мероприятие</th>
+        <th>Начало мероприятия</th>
+        <th>Конец мероприятия</th>
+        <th>Статус</th>
+        <th>Комментарий</th>
+        <th>Оценка</th>
+        <th>Действия</th>
+    </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+<h2 >Посещенные мероприятия</h2>
 <table id="visitorTable">
     <thead>
     <tr>
@@ -130,6 +215,7 @@ h2 {
     <tbody>
     </tbody>
 </table>
+
 
 <script src="script.js"></script>
 </body>
